@@ -3,6 +3,7 @@ import { ErrorHandler, NgModule } from '@angular/core';
 import { IonicApp, IonicErrorHandler, IonicModule } from 'ionic-angular';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { StatusBar } from '@ionic-native/status-bar';
+import { SQLite } from '@ionic-native/sqlite';
 
 import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
@@ -11,6 +12,7 @@ import { ListPage } from '../pages/list/list';
 import { FavPage } from '../pages/fav/fav';
 import { SearchPage } from '../pages/search/search';
 import { TeamsPage } from '../pages/teams/teams';
+import { DbCrudProvider } from '../providers/db-crud/db-crud';
 
 
 @NgModule({
@@ -40,7 +42,9 @@ import { TeamsPage } from '../pages/teams/teams';
   providers: [
     StatusBar,
     SplashScreen,
-    {provide: ErrorHandler, useClass: IonicErrorHandler}
+    {provide: ErrorHandler, useClass: IonicErrorHandler},
+    SQLite,
+    DbCrudProvider
   ]
 })
 export class AppModule {}

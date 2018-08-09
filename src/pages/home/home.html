@@ -9,5 +9,9 @@
 <ion-content padding>
   Here you can make Team or randomize them ! 
 
-  <button ion-button large>Make a Team !</button>
+  <button ion-button large (click)='goToCreate()'>Add a Team</button>
+  <button ion-button large (click)='goToList()'>Teams list</button>
+  <button ion-button large (click)='goToFav()'>Favorites teams</button>
+  <button ion-button large (click)='goToSearch()'>Make a Team !</button>
+
 </ion-content>
