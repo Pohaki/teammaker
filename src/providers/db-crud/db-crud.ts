@@ -23,13 +23,14 @@ export class DbCrudProvider {
       location: 'default'
     }).then((db: SQLiteObject) => {
         //Create Table games then teams with foreign key on games
-        db.executeSql('CREATE TABLE IF NOT EXISTS games (game_id INTEGER PRIMARY KEY AUTOINCREMENT, creation_date DATE NOT NULL, update_date DATE NOT NULL, name VARCHAR(100),type VARCHAR(255) NOT NULL, description TEXT )',[])
+        db.executeSql('CREATE TABLE IF NOT EXISTS games (game_id INTEGER PRIMARY KEY AUTOINCREMENT, creation_date DATE NOT NULL DEFAULT NOW, update_date DATE NOT NULL DEFAULT NOW, name VARCHAR(100),type VARCHAR(255) NOT NULL, description TEXT )',[])
           .then(res => console.log(res))
           .catch(e => console.log(e));;
-        db.executeSql('CREATE TABLE IF NOT EXISTS teams (team_id INTEGER PRIMARY KEY AUTOINCREMENT, creation_date DATE NOT NULL, update_date DATE NOT NULL, name VARCHAR(100),data JSON NOT NULL, FOREIGN KEY(game_id) REFERENCES games(game_id), is_fav BOOLEAN DEFAULT FALSE)',[])
+        db.executeSql('CREATE TABLE IF NOT EXISTS teams (team_id INTEGER PRIMARY KEY AUTOINCREMENT, creation_date DATE NOT NULL DEFAULT NOW, update_date DATE NOT NULL DEFAULT NOW, name VARCHAR(100),data JSON NOT NULL, FOREIGN KEY(game_id) REFERENCES games(game_id), is_fav BOOLEAN DEFAULT FALSE)',[])
           .then(res => console.log(res))
           .catch(e => console.log(e));;
-    })
+    });
+    return this.results;
   }
   //Insert of a Team 
   addTeam(data: Array<any>){
@@ -38,7 +39,7 @@ export class DbCrudProvider {
       name: 'teams.db',
       location: 'default'
     }).then((db: SQLiteObject) => {
-        db.executeSql('INSERT INTO teams (creation_date,update_date,name,data,game_id,is_fav) VALUES (?,?,?,?,?,?)', data)
+        db.executeSql('INSERT INTO teams (creation_date,update_date,name,data,game_id,is_fav) VALUES (NOW(),NOW(),?,?,?,?)', data)
           .then(res => {
             this.results = [];
             this.results.push({result: true});
@@ -47,7 +48,8 @@ export class DbCrudProvider {
             this.results.push({result: false});
             console.log(e)
           });
-    })
+    });
+    return this.results;
   }
 
   //Update a Team
@@ -66,7 +68,8 @@ export class DbCrudProvider {
             this.results.push({result: false});
             console.log(e)
           });
-    })
+    });
+    return this.results;
   }
 
   //Delete a Team 
@@ -84,7 +87,8 @@ export class DbCrudProvider {
             this.results.push({result: false});
             console.log(e)
           });
-    })
+    });
+    return this.results;
   }
   
   //Update a Team with Fav 
@@ -103,7 +107,8 @@ export class DbCrudProvider {
             this.results.push({result: false});
             console.log(e)
           });
-    })
+    });
+    return this.results;
   }
   //Delete a fav on a Team
   deleteFav(data){
@@ -121,7 +126,8 @@ export class DbCrudProvider {
             this.results.push({result: false});
             console.log(e)
           });
-    })
+    });
+    return this.results;
   }
 
   //Select all Teams
@@ -150,6 +156,7 @@ export class DbCrudProvider {
           console.log(e)
         });
     })
+    return this.results;
   }
 
   //Select teams with filters 
@@ -161,7 +168,8 @@ export class DbCrudProvider {
         db.executeSql('',[])
           .then(res => {})
           .catch(e => console.log(e));
-    })
+    });
+    return this.results;
   }
 
   //Select on teams names
@@ -189,7 +197,8 @@ export class DbCrudProvider {
             this.results.push({result: false});
             console.log(e)
           });
-    })
+    });
+    return this.results;
   }
 
   //Select on teams names
@@ -217,8 +226,39 @@ export class DbCrudProvider {
             this.results.push({result: false});
             console.log(e)
           });
-    })
+    });
+    return this.results;
   }
+
+  //Select on teams names
+  getTeamsListByGameId(game_id){
+    this.sqlite.create({
+      name: 'teams.db',
+      location: 'default'
+    }).then((db: SQLiteObject) => {
+        db.executeSql('SELECT * FROM teams WHERE game_id=?',[game_id])
+          .then(res => {
+            this.results = [];
+            for(var i = 0; i < res.rows.length; i++){
+              this.results.push({
+                team_id : res.rows.item(i).team_id,
+                creation_date : res.rows.item(i).creation_date,
+                update_date : res.rows.item(i).update_date,
+                name : res.rows.item(i).name,
+                data : res.rows.item(i).data,
+                game_id : res.rows.item(i).game_id,
+                is_fav : res.rows.item(i).is_fav
+              });
+            }
+          }).catch(e => {
+            this.results = [];
+            this.results.push({result: false});
+            console.log(e)
+          });
+    });
+    return this.results;
+  }
+
   //Insert of a game 
   addGame(data){
     //[creation_date,update_date,name,type,description]
@@ -229,7 +269,8 @@ export class DbCrudProvider {
         db.executeSql('INSERT INTO games (creation_date,update_date,name,type,description) VALUES (?,?,?,?,?)',[data])
           .then(res => {})
           .catch(e => console.log(e));
-    })
+    });
+    return this.results;
   }
 
   //Update of a Game 
@@ -281,7 +322,8 @@ export class DbCrudProvider {
             this.results.push({result: false});
             console.log(e)
           });
-    })
+    });
+    return this.results;
   }
 
   //Select game by name
@@ -308,7 +350,8 @@ export class DbCrudProvider {
             this.results.push({result: false});
             console.log(e)
           });
-    })
+    });
+    return this.results;
   }
 
   //Select Game by type
@@ -335,6 +378,7 @@ export class DbCrudProvider {
             this.results.push({result: false});
             console.log(e)
           });
-    })
+    });
+    return this.results;
   }
 }
